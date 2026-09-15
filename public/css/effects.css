@@ -1,0 +1,269 @@
+@font-face {
+  font-family: "PSO";
+  src: url("../../src/fonts/pso_font.ttf") format("truetype");
+}
+
+.star-stream {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  margin-top: -4.5vw;
+  z-index: 3;
+  filter: blur(0.3vw);
+  overflow: hidden;
+  mix-blend-mode: screen;
+}
+
+.stream-particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  width: var(--r);
+  height: var(--r);
+  background-color: hsl(206, 100%, var(--lightness));
+  transform: translateY(var(--start-y)) translateX(var(--start-x));
+  animation-iteration-count: infinite;
+  animation-duration: var(--duration);
+  animation-delay: var(--delay);
+}
+
+.stream-right { animation-name: stream-right; }
+.stream-left  { animation-name: stream-left; }
+
+@keyframes stream-right {
+  0%   { background-color: hsl(206, 100%, 100%); }
+  17%  { background-color: hsl(206, 100%, 80%); }
+  100% {
+    transform: translateY(var(--start-y)) translateX(calc(var(--start-x) + 55vw)) scale(0.1);
+    background-color: hsl(206, 100%, 40%);
+  }
+}
+
+@keyframes stream-left {
+  0%   { background-color: hsl(206, 100%, 100%); }
+  10%  { background-color: hsl(206, 100%, 80%); }
+  100% {
+    transform: translateY(var(--start-y)) translateX(calc(var(--start-x) - 55vw)) scale(0.1);
+    background-color: hsl(206, 100%, 40%);
+  }
+}
+
+.starburst {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  margin-top: -3vw;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: blur(0.12vw);
+}
+
+.ray {
+  position: absolute;
+  transform: rotate(calc(360deg * var(--rot))) translateY(calc(var(--length) / -2 - 1.5vw));
+  height: var(--length);
+  width: 1.4vw;
+  background-color: hsl(var(--hue), 100%, 87%);
+  clip-path: polygon(41% 68%, 45% 90%, 51% 100%, 57% 90%, 61% 68%, 62% 55%, 51% 0, 40% 56%);
+  opacity: 0;
+  animation-name: ray-move, ray-sparkle, ray-hide;
+  animation-iteration-count: infinite;
+  animation-duration: 3s, 3s, var(--duration2);
+  animation-delay: var(--delay1), var(--delay1), var(--delay2);
+}
+
+@keyframes ray-sparkle {
+  0%  { opacity: 0; }
+  20% { opacity: 1; }
+  60% { opacity: 0; }
+}
+
+@keyframes ray-move {
+  from { transform: rotate(calc(360deg * var(--rot))) translateY(calc(var(--length) / -3)); }
+}
+
+@keyframes ray-hide {
+  0%   { visibility: hidden; }
+  50%  { visibility: hidden; }
+  100% { visibility: visible; }
+}
+
+.bg-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: 1;
+  opacity: 0.45;
+  display: grid;
+  grid-template-columns: 50vw 50vw;
+  grid-template-rows: 100vh;
+  font-family: monospace;
+  pointer-events: none;
+}
+
+.text-box {
+  padding: 0 1vw;
+  font-size: 1.3vw;
+  color: white;
+  font-family: "PSO", monospace;
+}
+
+.text-box p {
+  margin: 1em 0;
+}
+
+.align-left { text-align: left; }
+.align-right { text-align: right; }
+
+.align-left p:nth-child(1)::before { content: "vj21hs"; }
+.align-left p:nth-child(2)::before { content: "757r0gi8xrhtuv42j"; }
+.align-left p:nth-child(3)::before { content: "c53 d4qhylmcp5hkcm5om"; }
+.align-left p:nth-child(4)::before { content: "b5ach8yw095k5ry4n1x7uy6u5"; }
+.align-left p:nth-child(5)::before { content: "d43fo7htswets c5du"; }
+.align-left p:nth-child(6)::before { content: "4s01w"; }
+.align-left p:nth-child(7)::before { content: "6m49hr8n5f9"; }
+.align-left p:nth-child(8)::before { content: "i9b3lwbzxatcyox2v0g5a"; }
+.align-left p:nth-child(9)::before { content: "wjncv4vnpo38co4eudti "; }
+.align-left p:nth-child(10)::before { content: "syecoia73duitzifq3lg3lf"; }
+.align-left p:nth-child(11)::before { content: "de7 nt97yk"; }
+.align-left p:nth-child(12)::before { content: "3rpfrkwl3vh47"; }
+.align-left p:nth-child(13)::before { content: "q6wqp27q8ytu8gnsg"; }
+.align-left p:nth-child(14)::before { content: "wtwhvptshuj"; }
+.align-left p:nth-child(15)::before { content: "8i2h6tfm1tv"; }
+.align-left p:nth-child(16)::before { content: "376k syc"; }
+.align-left p:nth-child(17)::before { content: "4twtgzijdlmd ny k hg"; }
+.align-left p:nth-child(18)::before { content: "oc3l1lg1zx8j84lbnx4ubffc"; }
+.align-left p:nth-child(19)::before { content: "g6cesuqhn44vak"; }
+.align-left p:nth-child(20)::before { content: "8a0lsg5y8v"; }
+.align-left p:nth-child(21)::before { content: "sye3lj342"; }
+.align-left p:nth-child(22)::before { content: "mfockoar4gfe m5"; }
+.align-left p:nth-child(23)::before { content: "nw91a38yj2tbgezy8l 4zlqi"; }
+.align-left p:nth-child(24)::before { content: "t7hlegq5 5fyoo6"; }
+.align-left p:nth-child(25)::before { content: "n7 9txqm0ph3"; }
+.align-left p:nth-child(26)::before { content: "mb11bfj8ds4dg8gbr3r"; }
+.align-left p:nth-child(27)::before { content: "7n9kvuolofvtgc7ia20cn 8t"; }
+.align-left p:nth-child(28)::before { content: "54vlecqtya3x57bnm2b30qp"; }
+.align-left p:nth-child(29)::before { content: "ck6n57ninfb61"; }
+.align-left p:nth-child(30)::before { content: "rkehd7nlfh7k8rmwarip66ijf"; }
+.align-left p:nth-child(31)::before { content: "1om1fhybpumqj"; }
+.align-left p:nth-child(32)::before { content: "s641jjv"; }
+.align-left p:nth-child(33)::before { content: "4e wjx 4zq2hy0mpruq52"; }
+.align-left p:nth-child(34)::before { content: "bni0modzuv"; }
+.align-left p:nth-child(35)::before { content: "dkxuj95 xfnz88ob7"; }
+.align-left p:nth-child(36)::before { content: "m424m2pbw7iufcj"; }
+.align-left p:nth-child(37)::before { content: "qx6m5"; }
+.align-left p:nth-child(38)::before { content: "aeup929zokm95te0dkii12ekx"; }
+.align-left p:nth-child(39)::before { content: "5fha15wx6k"; }
+.align-left p:nth-child(40)::before { content: "f h4ixz7bfjgj55x"; }
+.align-left p:nth-child(41)::before { content: "fxxyq7onpj2fcy2u p"; }
+.align-left p:nth-child(42)::before { content: "8ktw30b6qjlwk2d4"; }
+.align-left p:nth-child(43)::before { content: "1ojz6zov"; }
+.align-left p:nth-child(44)::before { content: "7z3mb"; }
+.align-left p:nth-child(45)::before { content: "nwxtud2b6emydy"; }
+.align-left p:nth-child(46)::before { content: "reuqlwj"; }
+.align-left p:nth-child(47)::before { content: "3l3d63n"; }
+.align-left p:nth-child(48)::before { content: "f6m5kaoc"; }
+.align-left p:nth-child(49)::before { content: "kvuu317cqkb2oos"; }
+.align-left p:nth-child(50)::before { content: "n2u8d1a8t"; }
+
+.align-right p:nth-child(1)::before { content: "dbr64aw0j"; }
+.align-right p:nth-child(2)::before { content: "6up01bv8ialdsmttrbmz"; }
+.align-right p:nth-child(3)::before { content: "ifpthrlu2j954 dcdbcjcjfo"; }
+.align-right p:nth-child(4)::before { content: "wshket6grewr2uynms"; }
+.align-right p:nth-child(5)::before { content: "2 tnwf"; }
+.align-right p:nth-child(6)::before { content: "gub9jeaae23gnk73a1oo"; }
+.align-right p:nth-child(7)::before { content: "jsxkeudprv8ngq7jazr0m602"; }
+.align-right p:nth-child(8)::before { content: "lrhcofhanv"; }
+.align-right p:nth-child(9)::before { content: "jz2qng91delo6"; }
+.align-right p:nth-child(10)::before { content: "61zdfl13txig"; }
+.align-right p:nth-child(11)::before { content: "9lj388ydpa2e8 70tgq0tk"; }
+.align-right p:nth-child(12)::before { content: "55ylvw"; }
+.align-right p:nth-child(13)::before { content: "r87f3jlh"; }
+.align-right p:nth-child(14)::before { content: "e70a69z3"; }
+.align-right p:nth-child(15)::before { content: "53zo3 cyeetgeyo ek6p3j2a"; }
+.align-right p:nth-child(16)::before { content: "q7 g2ifkzpp"; }
+.align-right p:nth-child(17)::before { content: "da73dmueyow55uos08j 0wyt"; }
+.align-right p:nth-child(18)::before { content: "m4xpwq3brqbnhthsn9y11jz 3"; }
+.align-right p:nth-child(19)::before { content: "l 0qluy7va450ouek8t00o"; }
+.align-right p:nth-child(20)::before { content: "xquw2ypt6szcoobgu15apz4y"; }
+.align-right p:nth-child(21)::before { content: "wgtrgl5p2xd1qfdb3xb3m5"; }
+.align-right p:nth-child(22)::before { content: "rv9e31cdote4"; }
+.align-right p:nth-child(23)::before { content: "8g9nszsvd"; }
+.align-right p:nth-child(24)::before { content: "ipnlojg"; }
+.align-right p:nth-child(25)::before { content: "rebis6n6s7"; }
+.align-right p:nth-child(26)::before { content: "pjxlb9dwetccni8flmu2t"; }
+.align-right p:nth-child(27)::before { content: "5jald z04eyi08rht9eilfl"; }
+.align-right p:nth-child(28)::before { content: "ulq4v5hs5j"; }
+.align-right p:nth-child(29)::before { content: "pkcsdrsi6v5vby0dun7 i d"; }
+.align-right p:nth-child(30)::before { content: "xni7lso6eq68zv64go iyvya"; }
+.align-right p:nth-child(31)::before { content: "dh ny"; }
+.align-right p:nth-child(32)::before { content: "wglg robvdwhqe11kl"; }
+.align-right p:nth-child(33)::before { content: "wo2zgupqj5l781pz6bs816zl"; }
+.align-right p:nth-child(34)::before { content: "1xcajad4"; }
+.align-right p:nth-child(35)::before { content: "vex077m1ewlrb2iw"; }
+.align-right p:nth-child(36)::before { content: "x3nh cvw4"; }
+.align-right p:nth-child(37)::before { content: "21rmxhrpg6ax"; }
+.align-right p:nth-child(38)::before { content: "717czdkh51t9h0 wfg"; }
+.align-right p:nth-child(39)::before { content: "cb pyiw1wpgwz"; }
+.align-right p:nth-child(40)::before { content: "t4qag9n75probku2dlha 4r"; }
+.align-right p:nth-child(41)::before { content: "yduby7713qhg q3q7y t02y1"; }
+.align-right p:nth-child(42)::before { content: "a44fwl0n8yl8fz8of2"; }
+.align-right p:nth-child(43)::before { content: "echyuyx"; }
+.align-right p:nth-child(44)::before { content: "glxhx9h"; }
+.align-right p:nth-child(45)::before { content: "2hg1x"; }
+.align-right p:nth-child(46)::before { content: "tw50dgrsajt7ah0r4"; }
+.align-right p:nth-child(47)::before { content: "6z36jleehb"; }
+.align-right p:nth-child(48)::before { content: "2d gtt u1s9ijilemrtoh"; }
+.align-right p:nth-child(49)::before { content: "d75pc7wtbl9"; }
+.align-right p:nth-child(50)::before { content: "66s7xiigxoenpurql"; }
+
+.hex-grid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0.1;
+  filter: blur(0.05vw);
+}
+
+.hex-grid-pulse {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.pulse-circle {
+  animation: hex-pulse 13.3s linear infinite;
+}
+
+@keyframes hex-pulse {
+  0%   { r: 0%; opacity: 1; }
+  9%   { r: 60%; opacity: 0; }
+  100% { r: 60%; opacity: 0; }
+}
+
+.orb-container {
+  position: absolute;
+  width: 45vw;
+  transform: translate(1vw, -3.75vw);
+  &> svg {
+    width: 100%;
+    overflow: visible
+  }
+} 
+
+.orb-container .all{
+  filter: url(#white-glow) url(#glow)
+}

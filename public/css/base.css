@@ -1,0 +1,25 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { overflow: hidden; }
+
+.page {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(148deg, rgb(0, 12, 56) 0%, rgb(0, 0, 0) 83%, rgb(0, 0, 0) 100%);
+  box-shadow: 0 0 12vw rgb(0, 0, 0) inset, 0 0 12vw rgba(0, 5, 87, 0.8) inset;
+  filter: blur(0.045rem);
+}
+
+.scan-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background-image: url("../img/scanlines.png");
+  background-repeat: repeat;
+  opacity: 0.2;
+}

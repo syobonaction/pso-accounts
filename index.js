@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import fs from 'fs'
 import { Appservice } from 'matrix-bot-sdk'
+import express from 'express'
 import session from 'express-session'
 import WebSocket from 'ws'
 import crypto from 'crypto'
@@ -112,6 +113,7 @@ appservice.on('room.message', async (roomId, event) => {
   }
 })
 
+app.use(express.static('public'))
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -119,6 +121,14 @@ app.use(
     saveUninitialized: false,
   })
 )
+
+app.get('/api/credentials', (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Not logged in' })
+  }
+  const account = db.prepare('SELECT serial_number, access_key_encrypted FROM accounts WHERE keycloak_user_id = ?').get(req.session.userId)
+  res.json({ sn: account.serial_number, key: account.access_key_encrypted })
+})
 
 app.get('/login', async (req, res) => {
   const code_verifier = client.randomPKCECodeVerifier()
@@ -147,7 +157,7 @@ app.get('/callback', async (req, res) => {
   })
 
   const sub = tokens.claims().sub
-  req.session.userId = sub
+  req.session.idToken = tokens.id_token
   const account = db.prepare('SELECT * FROM accounts WHERE keycloak_user_id = ?').get(sub)
   let credentials = {}
 
@@ -161,7 +171,17 @@ app.get('/callback', async (req, res) => {
       key: account.access_key_encrypted,
     }
   }
-  res.send(`Serial: ${credentials.sn}<br>Key: ${credentials.key}`)
+  res.redirect('/')
+})
+
+app.get('/logout', (req, res) => {
+  const idToken = req.session.idToken
+  req.session.destroy(() => {
+    const endSessionUrl = new URL(config.serverMetadata().end_session_endpoint)
+    endSessionUrl.searchParams.set('id_token_hint', idToken)
+    endSessionUrl.searchParams.set('post_logout_redirect_uri', 'https://pso.netreality.world/')
+    res.redirect(endSessionUrl.href)
+  })
 })
 
 await appservice.begin()
