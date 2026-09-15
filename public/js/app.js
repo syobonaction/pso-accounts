@@ -1,3 +1,17 @@
+const buildBgText = () => {
+  const fillColumn = (selector, count) => {
+    const container = document.querySelector(selector)
+    for (let i = 0; i < count; i++) {
+      container.appendChild(document.createElement('p'))
+    }
+  }
+
+  fillColumn('.text-box.align-left', 50)
+  fillColumn('.text-box.align-right', 50)
+}
+
+buildBgText()
+
 const showLoggedOutState = () => {
   document.querySelector('.action-text').hidden = false
   document.querySelector('.modal').hidden = true

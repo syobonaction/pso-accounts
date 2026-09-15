@@ -1,6 +1,6 @@
 @font-face {
   font-family: "PSO";
-  src: url("../../src/fonts/pso_font.ttf") format("truetype");
+  src: url("../fonts/pso_font.ttf") format("truetype");
 }
 
 .star-stream {

@@ -157,6 +157,7 @@ app.get('/callback', async (req, res) => {
   })
 
   const sub = tokens.claims().sub
+  req.session.userId = sub
   req.session.idToken = tokens.id_token
   const account = db.prepare('SELECT * FROM accounts WHERE keycloak_user_id = ?').get(sub)
   let credentials = {}
