@@ -56,6 +56,9 @@ const wireCopyButton = (buttonId, valueId, label) => {
 }
 
 document.addEventListener('keydown', handleEnterKey)
+document.querySelector('.action-text').addEventListener('click', () => {
+  window.location.href = '/login'
+})
 wireCopyButton('copy-sn', 'sn-value', 'Serial number')
 wireCopyButton('copy-key', 'key-value', 'Access key')
 checkLoginState()
