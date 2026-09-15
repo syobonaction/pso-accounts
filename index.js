@@ -86,27 +86,36 @@ const exportLinks = () => {
   fs.writeFileSync('/links/accounts.json', JSON.stringify(linksObject))
 }
 
-const chatSocket = new WebSocket('ws://169.254.1.2:9600/y/events/stream?events=CHAT_MESSAGE', { perMessageDeflate: false })
+const connectChatSocket = () => {
+  const socket = new WebSocket('ws://169.254.1.2:9600/y/events/stream?events=CHAT_MESSAGE', { perMessageDeflate: false })
 
-chatSocket.on('message', async (data) => {
-  const event = JSON.parse(data.toString())
-  if (event.EventType !== 'CHAT_MESSAGE') {
-    return
-  }
+  socket.on('message', async (data) => {
+    const event = JSON.parse(data.toString())
+    if (event.EventType !== 'CHAT_MESSAGE') {
+      return
+    }
 
-  const linked = db.prepare('SELECT username FROM accounts WHERE serial_number = ?').get(String(event.AccountID))
-  const label = linked ? `${event.FromName} (${linked.username})` : event.FromName
+    const linked = db.prepare('SELECT username FROM accounts WHERE serial_number = ?').get(String(event.AccountID))
+    const label = linked ? `${event.FromName} (${linked.username})` : event.FromName
 
-  try {
-    await appservice.botClient.sendText(process.env.MATRIX_ROOM_ID, `${label}: ${event.Text}`)
-  } catch (err) {
-    console.error('Failed to relay chat to Matrix:', err.message)
-  }
-})
+    try {
+      await appservice.botClient.sendText(process.env.MATRIX_ROOM_ID, `${label}: ${event.Text}`)
+    } catch (err) {
+      console.error('Failed to relay chat to Matrix:', err.message)
+    }
+  })
 
-chatSocket.on('error', (err) => {
-  console.error('Chat WebSocket error:', err.message)
-})
+  socket.on('error', (err) => {
+    console.error('Chat WebSocket error:', err.message)
+  })
+
+  socket.on('close', () => {
+    console.log('Chat WebSocket closed, reconnecting in 5s...')
+    setTimeout(connectChatSocket, 5000)
+  })
+}
+
+connectChatSocket()
 
 appservice.on('room.message', async (roomId, event) => {
   if (event.content?.msgtype !== 'm.text') return
