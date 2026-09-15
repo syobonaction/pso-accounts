@@ -142,3 +142,7 @@
 .modal[hidden] {
   display: none;
 }
+
+.action-text {
+  cursor: pointer;
+}
