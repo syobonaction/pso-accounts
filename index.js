@@ -14,6 +14,24 @@ const config = await client.discovery(
   process.env.OIDC_CLIENT_SECRET
 )
 
+const encrypt = (plaintext) => {
+  const iv = crypto.randomBytes(16)
+  const key = Buffer.from(process.env.ENCRYPTION_KEY, 'hex')
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv)
+  const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()])
+  const authTag = cipher.getAuthTag()
+  return [iv.toString('hex'), authTag.toString('hex'), encrypted.toString('hex')].join(':')
+}
+
+const decrypt = (combined) => {
+  const [ivHex, authTagHex, encryptedHex] = combined.split(':')
+  const key = Buffer.from(process.env.ENCRYPTION_KEY, 'hex')
+  const decipher = crypto.createDecipheriv('aes-256-gcm', key, Buffer.from(ivHex, 'hex'))
+  decipher.setAuthTag(Buffer.from(authTagHex, 'hex'))
+  const decrypted = Buffer.concat([decipher.update(Buffer.from(encryptedHex, 'hex')), decipher.final()])
+  return decrypted.toString('utf8')
+}
+
 const generateCredentials = () => {
   let sn
   do {
@@ -127,7 +145,7 @@ app.get('/api/credentials', (req, res) => {
     return res.status(401).json({ error: 'Not logged in' })
   }
   const account = db.prepare('SELECT serial_number, access_key_encrypted FROM accounts WHERE keycloak_user_id = ?').get(req.session.userId)
-  res.json({ sn: account.serial_number, key: account.access_key_encrypted })
+  res.json({ sn: account.serial_number, key: decrypt(account.access_key_encrypted) })
 })
 
 app.get('/login', async (req, res) => {
@@ -164,12 +182,12 @@ app.get('/callback', async (req, res) => {
 
   if(!account) {
     credentials = generateCredentials()
-    db.prepare('INSERT INTO accounts (keycloak_user_id, username, serial_number, access_key_encrypted) VALUES (?, ?, ?, ?)').run(sub, tokens.claims().preferred_username, credentials.sn, credentials.key)
+    db.prepare('INSERT INTO accounts (keycloak_user_id, username, serial_number, access_key_encrypted) VALUES (?, ?, ?, ?)').run(sub, tokens.claims().preferred_username, credentials.sn, encrypt(credentials.key))
     exportLinks()
   } else {
     credentials = {
       sn: account.serial_number,
-      key: account.access_key_encrypted,
+      key: decrypt(account.access_key_encrypted),
     }
   }
   res.redirect('/')
