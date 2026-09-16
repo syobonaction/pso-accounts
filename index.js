@@ -164,7 +164,7 @@ app.use(
   })
 )
 
-app.get('/api/credentials', authlimiter, (req, res) => {
+app.get('/api/credentials', authLimiter, (req, res) => {
   if (!req.session.userId) {
     return res.status(401).json({ error: 'Not logged in' })
   }
@@ -172,7 +172,7 @@ app.get('/api/credentials', authlimiter, (req, res) => {
   res.json({ sn: account.serial_number, key: decrypt(account.access_key_encrypted) })
 })
 
-app.get('/login', authlimiter, async (req, res) => {
+app.get('/login', authLimiter, async (req, res) => {
   const code_verifier = client.randomPKCECodeVerifier()
   const challenge =  await client.calculatePKCECodeChallenge(code_verifier)
   const state = client.randomState()
@@ -191,7 +191,7 @@ app.get('/login', authlimiter, async (req, res) => {
   res.redirect(authURL.href)
 })
 
-app.get('/callback', authlimiter, async (req, res) => {
+app.get('/callback', authLimiter, async (req, res) => {
   const url = new URL(req.originalUrl, `${req.protocol}://${req.get('host')}`)
   const tokens = await client.authorizationCodeGrant(config, url, {
     pkceCodeVerifier: req.session.codeVerifier,
