@@ -127,7 +127,7 @@ const connectChatSocket = () => {
 
     if (event.EventType === 'RARE_DROP' && event.NotifyServer) {
       try {
-        await appservice.botClient.sendText(process.env.MATRIX_ROOM_ID, `✨ ${event.PlayerName} found ${event.ItemDescription} in ${event.OriginLobbyID}'s "${event.GameName}"!`)
+        await appservice.botClient.sendText(process.env.MATRIX_ROOM_ID, `✨ ${event.PlayerName} found ${event.ItemDescription} in "${event.GameName}"!`)
       } catch (err) {
         console.error('Failed to relay rare drop to Matrix:', err.message)
       }
