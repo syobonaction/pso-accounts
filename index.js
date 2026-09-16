@@ -100,21 +100,38 @@ const exportLinks = () => {
 }
 
 const connectChatSocket = () => {
-  const socket = new WebSocket('ws://169.254.1.2:9600/y/events/stream?events=CHAT_MESSAGE', { perMessageDeflate: false })
+  const socket = new WebSocket('ws://169.254.1.2:9600/y/events/stream?events=CHAT_MESSAGE,CREATE_LOBBY,RARE_DROP', { perMessageDeflate: false })
 
   socket.on('message', async (data) => {
     const event = JSON.parse(data.toString())
-    if (event.EventType !== 'CHAT_MESSAGE') {
+
+    if (event.EventType === 'CHAT_MESSAGE') {
+      const linked = db.prepare('SELECT username FROM accounts WHERE serial_number = ?').get(String(event.AccountID))
+      const label = linked ? `${event.FromName} (${linked.username})` : event.FromName
+      try {
+        await appservice.botClient.sendText(process.env.MATRIX_ROOM_ID, `${label}: ${event.Text}`)
+      } catch (err) {
+        console.error('Failed to relay chat to Matrix:', err.message)
+      }
       return
     }
 
-    const linked = db.prepare('SELECT username FROM accounts WHERE serial_number = ?').get(String(event.AccountID))
-    const label = linked ? `${event.FromName} (${linked.username})` : event.FromName
+    if (event.EventType === 'CREATE_LOBBY' && !event.IsGame) {
+      try {
+        await appservice.botClient.sendText(process.env.MATRIX_ROOM_ID, `🎮 A new game "${event.GameName}" (${event.Episode}, ${event.Difficulty}) was just created in Lobby ${event.OriginLobbyID}!`)
+      } catch (err) {
+        console.error('Failed to relay room creation to Matrix:', err.message)
+      }
+      return
+    }
 
-    try {
-      await appservice.botClient.sendText(process.env.MATRIX_ROOM_ID, `${label}: ${event.Text}`)
-    } catch (err) {
-      console.error('Failed to relay chat to Matrix:', err.message)
+    if (event.EventType === 'RARE_DROP' && event.NotifyServer) {
+      try {
+        await appservice.botClient.sendText(process.env.MATRIX_ROOM_ID, `✨ ${event.PlayerName} found ${event.ItemDescription} in ${event.OriginLobbyID}'s "${event.GameName}"!`)
+      } catch (err) {
+        console.error('Failed to relay rare drop to Matrix:', err.message)
+      }
+      return
     }
   })
 
