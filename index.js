@@ -3,6 +3,7 @@ import fs from 'fs'
 import { Appservice } from 'matrix-bot-sdk'
 import express from 'express'
 import session from 'express-session'
+import rateLimit from 'express-rate-limit'
 import WebSocket from 'ws'
 import crypto from 'crypto'
 import Database from 'better-sqlite3'
@@ -31,6 +32,14 @@ const decrypt = (combined) => {
   const decrypted = Buffer.concat([decipher.update(Buffer.from(encryptedHex, 'hex')), decipher.final()])
   return decrypted.toString('utf8')
 }
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+})
 
 const generateCredentials = () => {
   let sn
@@ -155,7 +164,7 @@ app.use(
   })
 )
 
-app.get('/api/credentials', (req, res) => {
+app.get('/api/credentials', authlimiter, (req, res) => {
   if (!req.session.userId) {
     return res.status(401).json({ error: 'Not logged in' })
   }
@@ -163,7 +172,7 @@ app.get('/api/credentials', (req, res) => {
   res.json({ sn: account.serial_number, key: decrypt(account.access_key_encrypted) })
 })
 
-app.get('/login', async (req, res) => {
+app.get('/login', authlimiter, async (req, res) => {
   const code_verifier = client.randomPKCECodeVerifier()
   const challenge =  await client.calculatePKCECodeChallenge(code_verifier)
   const state = client.randomState()
@@ -182,7 +191,7 @@ app.get('/login', async (req, res) => {
   res.redirect(authURL.href)
 })
 
-app.get('/callback', async (req, res) => {
+app.get('/callback', authlimiter, async (req, res) => {
   const url = new URL(req.originalUrl, `${req.protocol}://${req.get('host')}`)
   const tokens = await client.authorizationCodeGrant(config, url, {
     pkceCodeVerifier: req.session.codeVerifier,
