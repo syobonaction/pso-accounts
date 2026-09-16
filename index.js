@@ -155,7 +155,7 @@ appservice.on('room.message', async (roomId, event) => {
   const MAX_LENGTH = 150
   const senderName = event.sender.split(':')[0].replace('@', '')
   const sanitizedBody = sanitizeForPSO(event.content.body)
-  const text = `${senderName}: ${sanitizedBody}`
+  let text = `${senderName}: ${sanitizedBody}`
   if (text.length > MAX_LENGTH) {
     text = text.slice(0, MAX_LENGTH - 3) + '...'
   }
