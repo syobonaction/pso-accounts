@@ -24,6 +24,10 @@ const encrypt = (plaintext) => {
   return [iv.toString('hex'), authTag.toString('hex'), encrypted.toString('hex')].join(':')
 }
 
+const sanitizeForPSO = (input) => {
+  return input.replace(/\$C[0-9A-Za-z]/g, '')
+}
+
 const decrypt = (combined) => {
   const [ivHex, authTagHex, encryptedHex] = combined.split(':')
   const key = Buffer.from(process.env.ENCRYPTION_KEY, 'hex')
@@ -133,7 +137,8 @@ appservice.on('room.message', async (roomId, event) => {
 
   const MAX_LENGTH = 150
   const senderName = event.sender.split(':')[0].replace('@', '')
-  const text = `${senderName}: ${event.content.body}`
+  const sanitizedBody = sanitizeForPSO(event.content.body)
+  const text = `${senderName}: ${sanitizedBody}`
   if (text.length > MAX_LENGTH) {
     text = text.slice(0, MAX_LENGTH - 3) + '...'
   }
